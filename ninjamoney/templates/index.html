@@ -38,6 +38,16 @@
                 <button type="submit">Find Gold!</button>
             </form>
         </div>
+
+        <div class="activities">
+            {% for move in request.session.moves %}
+                {% if move.0 < 0 %}
+                    <p>Has perdido {{ move.0 }} oro en {{ move.1}} ({{ move.2 }})</p>
+                {% else %}
+                    <p>Has ganado {{ move.0 }} oro en {{ move.1}} ({{ move.2 }})</p>
+                {% endif %}
+            {% endfor %}
+        </div>
         
     </div>
 </body>
