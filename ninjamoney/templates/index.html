@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ninja Money</title>
+</head>
+<body>
+    <div class="container">
+        <label for="">Your Gold</label>  <!-- En el for va el id del input que se hace despues -->
+        <h3>{{ request.session.gold_amount }}</h3>        
+        <div class="">
+            <form action="process_money" method="POST"> <!-- podemos ser específicos en la ruta con el action -->
+                {% csrf_token %}
+                <input type="hidden" name="farm"> <!-- Nos piden agregar un input en el ejercicio, podemos llamar al metodo específico -->
+                <button type="submit">Find Gold!</button>
+            </form>
+        </div>
+        <div class="">
+            <form action="process_money" method="POST"> 
+                {% csrf_token %}
+                <input type="hidden" name="cave"> 
+                <button type="submit">Find Gold!</button>
+            </form>
+        </div>
+        <div class="">
+            <form action="process_money" method="POST"> 
+                {% csrf_token %}
+                <input type="hidden" name="house"> 
+                <button type="submit">Find Gold!</button>
+            </form>
+        </div>
+        <div class="">
+            <form action="process_money" method="POST"> 
+                {% csrf_token %}
+                <input type="hidden" name="casino"> 
+                <button type="submit">Find Gold!</button>
+            </form>
+        </div>
+        
+    </div>
+</body>
+</html>
