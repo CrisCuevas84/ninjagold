@@ -1,0 +1,119 @@
+
+	sudo nano djangoSistemaBase/settings.py
+
+	gunicorn bookreview.wsgi
+
+	python3 manage.py collectstatic
+
+	gunicorn djangoSistemaBase.wsgi
+
+	* agregar os, en el path del settings
+
+	cd /etc/systemd/system
+
+	sudo nano /etc/systemd/system/gunicorn.service
+
+	[Unit]
+	Description=gunicorn daemon
+	After=network.target
+	[Service]
+	User=ubuntu
+	Group=www-data
+	WorkingDirectory=/home/ubuntu/{{myRepoName}}
+	ExecStart=/home/ubuntu/{{myRepoName}}/venv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/{{myRepoName}}/{{projectName}}.sock {projectName}}.wsgi:application
+	[Install]
+	WantedBy=multi-user.target
+
+	
+	[Unit]
+	Description=gunicorn daemon
+	After=network.target
+	[Service]
+	User=ubuntu
+	Group=www-data
+	WorkingDirectory=/home/ubuntu/ninjagold
+	ExecStart=/home/ubuntu/mientorno/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/ninjagold/ninjagold.sock ninjagold.wsgi:application
+	[Install]
+	WantedBy=multi-user.target
+
+
+	sudo systemctl daemon-reload
+
+	sudo systemctl restart gunicorn
+
+	sudo systemctl status gunicorn
+
+
+*********************************************************************************************
+Ahora necesitamos crear un nuevo archivo para configurar NGINX, nuestro servidor web.
+
+cd /etc/nginx/
+
+ubuntu@54.162.31.253:~$ sudo nano /etc/nginx/sites-available/{{projectName}}
+
+Agregue lo siguiente a este nuevo documento, editando lo que está dentro de las llaves {{}}. No olvides escribir ipara ingresar al modo de inserción.
+
+server {
+  listen 80;
+  server_name 127.0.0.1;
+  location = /favicon.ico { access_log off; log_not_found off; }
+  location /static/ {
+      root /home/ubuntu/book_reviews;
+  }
+  location / {
+      include proxy_params;
+      proxy_pass http://unix:/home/ubuntu/book_reviews/djangoSistemaBase.sock;
+  }
+}
+
+
+server {
+  listen 80;
+  server_name {{yourEC2.public.ip}};
+  location = /favicon.ico { access_log off; log_not_found off; }
+  location /static/ {
+      root /home/ubuntu/{{myRepoName}};
+  }
+  location / {
+      include proxy_params;
+      proxy_pass http://unix:/home/ubuntu/{{myRepoName}}/{{projectName}}.sock;
+  }
+}
+Guardar y Salir. 
+
+Ahora vamos a crear un enlace a este archivo para que NGINX sepa qué configuraciones usar. Ejecute lo siguiente (tomando nota del espacio después de {{projectName}}):
+
+ubuntu@54.162.31.253:~$ sudo ln -s /etc/nginx/sites-available/{{projectName}} /etc/nginx/sites-enabled
+COMPROBAR: asegúrese de que el enlace se realizó correctamente. Si no tiene éxito, verifique doble y triplemente el archivo que acabamos de crear.
+
+ubuntu@54.162.31.253:~$ sudo nginx -t
+Ahora que tenemos nuestra configuración personalizada, eliminaremos el sitio predeterminado de Nginx.
+
+ubuntu@54.162.31.253:~$ sudo rm /etc/nginx/sites-enabled/default
+Todo lo que queda por hacer es reiniciar nuestro servidor NGINX con nuestra configuración actualizada.
+
+ubuntu@54.162.31.253:~$ sudo service nginx restart
+
+Si no ves ningún error del último paso, redoble de tambores ... ¡ve a tu URL! Estás en internet, ¡increíble!
+
+
+*********************************************************************************
+Para actualizar, estando en la carpeta del proyecto
+	git pull 
+
+Para que no haya conflicto de merge
+Archivo settings.py es mejor que no se modifique online, sino que es mejor que sea dejado listo localmente
+
+Luego
+	Python3 manage.py collecstatic
+
+y Luego
+	sudo systemctl daemon-reload
+
+	sudo systemctl restart gunicorn
+
+	sudo systemctl status gunicorn
+
+
+
+

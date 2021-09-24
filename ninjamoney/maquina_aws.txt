@@ -1,0 +1,30 @@
+
+Comandos Maquina AWS
+
+sudo apt-get update
+
+sudo apt-get upgrade
+
+sudo apt-get install nginx
+
+python3 --version
+
+sudo apt install python3-pip
+
+sudo apt install python3-venv
+
+pip install django
+
+pip install bcrypt
+
+pip install gunicorn
+
+python3 -m venv mientorno
+
+git clone https://github.com/AlexUrtubia/book_reviews
+
+source mientorno/bin/activate
+
+sudo nano manage.py   //// mejor comando para editar archivos ////
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static/") ///// pegar al final del settings.py
